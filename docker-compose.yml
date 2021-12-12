@@ -1,0 +1,55 @@
+version: '3'
+services:
+  auth-app:
+    build: ./auth-service/.
+    ports:
+      - '7575:7575'
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  transfer-app:
+    build: ./money-transfer/.
+    ports:
+      - '8080:8080'
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  postgres-auth:
+    container_name: postgres_container_auth
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      - ./auth-service/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+    expose:
+      - '5434'
+    ports:
+      - '5434:5434'
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres_container_app
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PGDATA: /data/postgres
+    volumes:
+      - ./money-transfer/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+    expose:
+      - '5435'
+    ports:
+      - '5435:5435'
+    restart: unless-stopped
+
+  redis:
+    container_name: redis_container
+    image: redis
+    ports:
+      - '6380:6380'
+    restart: unless-stopped

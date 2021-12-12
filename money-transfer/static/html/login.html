@@ -1,0 +1,61 @@
+{{define "login"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/navigation.css">
+    <link rel="shortcut icon" href="#"/>
+    <title> easy money </title>
+</head>
+
+<body>
+    <nav class="navigation-header">
+        <a href="/">
+            <h1> easy money </h1>
+        </a>
+        <a href="/login" id="login">Log In</a>
+    </nav>
+
+    <form method="POST" action="/login">
+        <div class="login-card-elements">
+            <p>Email</p>
+            <input name="Email" minlength="5">
+            <p>Password</p>
+            <input name="Password" type="password" minlength="5">
+            <p>
+                <input id="send" value="Sign in" type="submit"></input>
+            </p>
+        </div>
+    </form>
+
+    <form method="POST" action="/signup">
+        <div class="login-card-elements">
+            <p> Email</p>
+            <input name="Email" type="email">
+            <p>First Name</p>
+            <input name="FirstName" minlength="2">
+
+            <p>Last Name</p>
+            <input name="LastName" minlength="2">
+
+            <p>IIN</p>
+            <input name="IIN" minlength="12">
+
+            <p>Phone</p>
+            <input name="IIN" minlength="11">
+
+            <p>Password</p>
+            <input name="Password" type="password"  minlength="5">
+            <p>
+                <input id="send" value="Sign up" type="submit"></input>
+            </p>
+        </div>
+    </form>
+    
+</body>
+
+</html>
+{{ end }}
