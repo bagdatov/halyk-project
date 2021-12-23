@@ -5,7 +5,7 @@ services:
     ports:
       - '7575:7575'
     depends_on:
-      - postgres
+      - postgres-auth
     restart: unless-stopped
 
   transfer-app:
@@ -13,12 +13,12 @@ services:
     ports:
       - '8080:8080'
     depends_on:
-      - postgres
+      - postgres-app
       - redis
     restart: unless-stopped
 
   postgres-auth:
-    container_name: postgres_container_auth
+    container_name: postgres-auth
     image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -26,14 +26,12 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./auth-service/init.sql:/docker-entrypoint-initdb.d/1-init.sql
-    expose:
-      - '5434'
     ports:
-      - '5434:5434'
+      - '5432:5432'
     restart: unless-stopped
 
-  postgres:
-    container_name: postgres_container_app
+  postgres-app:
+    container_name: postgres-app
     image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -41,14 +39,12 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./money-transfer/init.sql:/docker-entrypoint-initdb.d/1-init.sql
-    expose:
-      - '5435'
     ports:
-      - '5435:5435'
+      - '5433:5432'
     restart: unless-stopped
 
   redis:
-    container_name: redis_container
+    container_name: redis
     image: redis
     ports:
       - '6380:6380'

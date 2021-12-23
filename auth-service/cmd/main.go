@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+
 	"net/http"
 	"time"
 
@@ -52,6 +53,8 @@ func main() {
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  15 * time.Second,
 	}
+
+	log.Info().Msg("databases connected")
 
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatal().Err(err).Msg("something went wrong")
