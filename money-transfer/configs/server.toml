@@ -1,8 +1,7 @@
-bind_add = ":8080"
-
+bind_addr = ":8080"
 
 db_host = "postgres-app"
-db_port = ":54325433"
+db_port = ":5432"
 db_name = "postgres"
 db_user = "postgres"
 db_password = "postgres"

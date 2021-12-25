@@ -1,8 +1,8 @@
-bind_add = ":7575"
+bind_addr = ":7575"
 
 cache_host = "redis"
 cache_password = ""
-cache_add = ":6380"
+cache_addr = ":6379"
 
 
 access_token_secret = "18DbJX9NR0WApJtB9OgmQkdlmHLwaHpK"

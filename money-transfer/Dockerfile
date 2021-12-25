@@ -10,8 +10,8 @@ RUN go mod download
 
 RUN go build -o /web ./cmd/main.go
 
-EXPOSE 7575
+EXPOSE 8080
 
-ENV HTTP_PORT=7575
+# ENV HTTP_PORT=8080
 
 CMD ["/web"]
