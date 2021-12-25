@@ -10,6 +10,7 @@ import (
 
 	"money-transfer/domain"
 	"money-transfer/transfer/delivery"
+	transferUseCase "money-transfer/transfer/usecase"
 
 	"github.com/BurntSushi/toml"
 )
@@ -34,15 +35,15 @@ func main() {
 	}
 
 	// setting up bussiness logic
-	// usecase, err := transferUseCase.New(config)
-	// if err != nil {
-	// 	log.Fatal().Err(err).Msg("cannot start app")
-	// }
+	usecase, err := transferUseCase.New(config)
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot start app")
+	}
 
 	// connecting delivery layer
 	router := chi.NewRouter()
 
-	if err := delivery.NewTransactionHandler(config, router, nil); err != nil {
+	if err := delivery.NewTransactionHandler(config, router, usecase); err != nil {
 		log.Fatal().Err(err).Msg("cannot start app")
 	}
 

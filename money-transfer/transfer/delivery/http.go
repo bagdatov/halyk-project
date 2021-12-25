@@ -25,7 +25,7 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 	}
 
 	fs := http.FileServer(http.Dir("static/css"))
-	router.Handle("/static/", http.StripPrefix("./static/css", fs))
+	router.Handle("/static/*", http.StripPrefix("/static/css", fs))
 
 	tmpl, err := template.ParseFiles("./static/html/login.html")
 	if err != nil {
