@@ -23,5 +23,6 @@ type Repository interface {
 	GetLastTransaction(ctx context.Context, accountID int64) (*Transaction, error)
 	ChangeAccountSum(ctx context.Context, accountID, newValue int64) error
 	CreateTransaction(ctx context.Context, SenderID, ReceiverID, Value int64) error
+	AccountExists(ctx context.Context, accountID int64) bool
 	CloseConnection()
 }

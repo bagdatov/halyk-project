@@ -10,21 +10,3 @@ CREATE TABLE IF NOT EXISTS users (
     Role VARCHAR NOT NULL,
     CONSTRAINT users_pk PRIMARY KEY (ID)
 );
-
--- CREATE TABLE IF NOT EXISTS accounts (
---     ID BIGSERIAL NOT NULL PRIMARY KEY,
---     OwnerID BIGSERIAL NOT NULL,
---     Amount BIGSERIAL NOT NULL,
---     FOREIGN KEY (OwnerID) REFERENCES users (ID)
--- );
-
--- CREATE TABLE IF NOT EXISTS transactions (
---     ID BIGSERIAL NOT NULL PRIMARY KEY,
---     SenderID BIGSERIAL NOT NULL,
---     ReceiverID BIGSERIAL NOT NULL,
---     NetAmount BIGSERIAL NOT NULL,
---     Сommission BIGSERIAL NOT NULL,
---     Date TIMESTAMP NOT NULL,
---     FOREIGN KEY (SenderID) REFERENCES users (ID),
---     FOREIGN KEY (ReceiverID) REFERENCES users (ID)
--- );

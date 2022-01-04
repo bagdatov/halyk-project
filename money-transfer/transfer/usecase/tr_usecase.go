@@ -2,9 +2,16 @@ package transferUseCase
 
 import (
 	"context"
+	"math/rand"
+	"time"
 
 	"money-transfer/domain"
 	"money-transfer/transfer/repository/pg"
+)
+
+const (
+	Min int64 = 1000000000000000
+	Max int64 = 9999999999999999
 )
 
 type transferUseCase struct {
@@ -23,6 +30,17 @@ func New(c *domain.Config) (domain.Transfer, error) {
 }
 
 func (tu *transferUseCase) CreateAccount(ctx context.Context, account *domain.Account) error {
+	rand.Seed(time.Now().UnixNano())
+
+	for {
+		randomID := rand.Int63n(Max-Min+1) + Min
+
+		if !tu.db.AccountExists(ctx, randomID) {
+			account.ID = randomID
+			break
+		}
+	}
+
 	return tu.db.CreateAccount(ctx, account)
 }
 

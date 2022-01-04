@@ -16,14 +16,14 @@
         <a href="/">
             <h1> easy money </h1>
         </a>
-        <a href="/login" id="login">Log In</a>
+        <a href="http://localhost:7575/login" id="login">Log In</a>
     </nav>
 
     <div class="feed">
 
-        <form method="POST" action="/login">
+        <form method="POST" action="http://localhost:7575/login">
             <div class="login-card-elements">
-                <p>Login Here:</p>
+                <p> <b>Login Here:</b> </p>
                 <p>Email</p>
                 <input name="Email" minlength="5">
                 <p>Password</p>
@@ -34,9 +34,9 @@
             </div>
         </form>
 
-        <form method="POST" action="/signup">
+        <form method="POST" action="http://localhost:7575/signup">
             <div class="login-card-elements">
-                <p>First time? Join now:</p>
+                <p> <b>First time? Join now:</b></p>
                 <p> Email</p>
                 <input name="Email" type="email">
                 <p>First Name</p>
@@ -49,7 +49,7 @@
                 <input name="IIN" minlength="12">
 
                 <p>Phone</p>
-                <input name="IIN" minlength="11">
+                <input name="Phone" minlength="11">
 
                 <p>Password</p>
                 <input name="Password" type="password" minlength="5">

@@ -1,0 +1,68 @@
+{{define "main"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/navigation.css">
+    <link rel="shortcut icon" href="#" />
+    <title> easy money </title>
+</head>
+
+<body>
+    <nav class="navigation-header">
+        <a href="/">
+            <h1> easy money </h1>
+        </a>
+        <a href="http://localhost:7575/login" id="login">Log In</a>
+    </nav>
+
+    <div class="feed">
+
+        <p> <b> Check out own accounts </b> </p>
+        <a href="/accounts" id="login"> Your accounts </a>
+
+        <p> <b> Create new wallet </b> </p>
+        <form method="POST" action="/accounts">
+                <p>Confirm by passing IIN</p>
+                <input name="IIN" minlength="12">
+
+                <p>
+                    <input id="send" value="Create new wallet" type="submit"></input>
+                </p>
+          
+        </form>
+
+        <p> <b> Send money </b> </p>
+        <form method="POST" action="/transaction">
+            <p> From your account: </p>
+            <input name="senderID" placeholder="your wallet id">
+            <p> To account: </p>
+            <input name="recieverID" placeholder="wallet id of receiver">
+            <p> Amount: </p>
+            <input name="amount" placeholder="amount of money to send">
+            <p>
+                <input id="send" value="Send money" type="submit"></input>
+            </p>
+        </form>
+
+        <p> <b> Add money to your account </b> </p>
+        <form method="POST" action="/increment">
+
+            <p> For your account: </p>
+            <input name="accountID" placeholder="your wallet id">
+            <p> Amount: </p>
+            <input name="amount" placeholder="amount of money to add">
+            <p>
+                <input id="send" value="Add money" type="submit"></input>
+            </p>
+        </form>     
+
+    </div>
+
+</body>
+
+</html>
+{{ end }}

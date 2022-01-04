@@ -3,6 +3,7 @@ package delivery
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 
@@ -149,6 +150,16 @@ func (s *AuthHanlder) LoginHandler() http.HandlerFunc {
 
 		http.SetCookie(w, &cookie)
 
+		expiration = time.Now().Add(s.au.GetAccessTokenTTL())
+		cookie = http.Cookie{
+			Name:     "access_token",
+			Value:    accessToken,
+			Expires:  expiration,
+			HttpOnly: true,
+		}
+
+		http.SetCookie(w, &cookie)
+
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(reply)
 	}
@@ -210,14 +221,16 @@ func (s *AuthHanlder) UserDataHandler() http.HandlerFunc {
 			return
 		}
 
-		req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/myaccounts", nil)
+		req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/accounts", nil)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		h := r.Header.Get("Authorization")
-		req.Header.Set("Authorization", h)
+		c, _ := r.Cookie("access_token")
+		cookie := fmt.Sprintf("access_token=%s", c.Value)
+
+		req.Header.Set("Cookie", cookie)
 
 		client := &http.Client{}
 

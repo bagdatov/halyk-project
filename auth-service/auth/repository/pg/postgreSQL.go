@@ -50,7 +50,7 @@ func (db *sqlRepository) CreateUser(ctx context.Context, u *domain.User) error {
 
 	_, err := db.Exec(ctx,
 		`INSERT INTO users(Email, FirstName, LastName, Password, IIN, Phone, Registered, Role) 
-		VALUES($1, $2, $3, $4, $5, $6, $7)`,
+		VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
 		u.Email, u.FirstName, u.LastName, u.Password, u.IIN, u.Phone, u.Registered, u.Role,
 	)
 
@@ -67,11 +67,11 @@ func (db *sqlRepository) FindUser(ctx context.Context, email string) (*domain.Us
 	user := &domain.User{}
 
 	err := db.QueryRow(ctx,
-		`SELECT ID, FirstName, LastName, Password, Role
+		`SELECT ID, FirstName, LastName, Password, Role, IIN
 		FROM users 
 		WHERE Email=$1`,
 		email,
-	).Scan(&user.ID, &user.FirstName, &user.LastName, &user.Password, &user.Role)
+	).Scan(&user.ID, &user.FirstName, &user.LastName, &user.Password, &user.Role, &user.IIN)
 
 	if err == pgx.ErrNoRows {
 		return nil, err

@@ -38,16 +38,24 @@ func (m *MiddleWare) CheckAuthMiddleware(next http.Handler) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
-		header := r.Header.Get("Authorization")
+		// header := r.Header.Get("Authorization")
 
-		token, err := m.ExtractToken(header)
+		// token, err := m.ExtractToken(header)
+		// if err != nil {
+		// 	log.Debug().Err(err).Msgf("Extract token error: %v", err)
+		// 	http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+		// 	return
+		// }
+
+		c, err := r.Cookie("access_token")
+
 		if err != nil {
 			log.Debug().Err(err).Msgf("Extract token error: %v", err)
 			http.Redirect(w, r, "/login", http.StatusMovedPermanently)
 			return
 		}
 
-		user, err := m.ParseToken(token, true)
+		user, err := m.ParseToken(c.Value, true)
 		if err != nil {
 			if err == domain.ErrExpiredToken {
 				http.Redirect(w, r, "/update-token", http.StatusMovedPermanently)
@@ -115,6 +123,11 @@ func (m *MiddleWare) ParseToken(token string, isAccess bool) (*domain.User, erro
 			return nil, domain.ErrInvalidToken
 		}
 
+		iin, ok := claims["iin"].(string)
+		if !ok {
+			return nil, domain.ErrInvalidToken
+		}
+
 		expiredTime := time.Unix(int64(exp), 0)
 
 		if time.Now().After(expiredTime) {
@@ -123,6 +136,7 @@ func (m *MiddleWare) ParseToken(token string, isAccess bool) (*domain.User, erro
 		return &domain.User{
 			ID:   int64(userID),
 			Role: role,
+			IIN:  iin,
 		}, nil
 	}
 

@@ -156,6 +156,11 @@ func (a *authUseCase) ParseToken(token string, isAccess bool) (*domain.User, err
 			return nil, domain.ErrInvalidToken
 		}
 
+		iin, ok := claims["iin"].(string)
+		if !ok {
+			return nil, domain.ErrInvalidToken
+		}
+
 		expiredTime := time.Unix(int64(exp), 0)
 
 		if time.Now().After(expiredTime) {
@@ -164,6 +169,7 @@ func (a *authUseCase) ParseToken(token string, isAccess bool) (*domain.User, err
 		return &domain.User{
 			ID:   int64(userID),
 			Role: role,
+			IIN:  iin,
 		}, nil
 	}
 
@@ -180,6 +186,7 @@ func (a *authUseCase) GenerateAndSendTokens(u *domain.User) (string, string, err
 	accessTokenClaims["iat"] = time.Now().Unix()
 	accessTokenClaims["exp"] = accessTokenExp
 	accessTokenClaims["role"] = u.Role
+	accessTokenClaims["iin"] = u.IIN
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
 
 	accessSignedToken, err := accessToken.SignedString([]byte(a.accessSecret))
@@ -193,6 +200,7 @@ func (a *authUseCase) GenerateAndSendTokens(u *domain.User) (string, string, err
 	refreshTokenClaims["iat"] = time.Now().Unix()
 	refreshTokenClaims["exp"] = refreshTokenExp
 	refreshTokenClaims["role"] = u.Role
+	refreshTokenClaims["iin"] = u.IIN
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshTokenClaims)
 
 	refreshSignedToken, err := refreshToken.SignedString([]byte(a.refreshSecret))

@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 
 	middleware "money-transfer/transfer/delivery/middleware"
 
@@ -27,7 +28,7 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 	fs := http.FileServer(http.Dir("static/css"))
 	router.Handle("/static/*", http.StripPrefix("/static/css", fs))
 
-	tmpl, err := template.ParseFiles("./static/html/login.html")
+	tmpl, err := template.ParseFiles("./static/html/login.html", "./static/html/main.html")
 	if err != nil {
 		return err
 	}
@@ -36,10 +37,22 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 
 	m := middleware.New(c)
 
-	router.With(m.CheckAuthMiddleware).Get("/myaccounts", handler.AccountsInfo)
+	router.With(m.CheckAuthMiddleware).Get("/main", handler.IndexPage(tmpl))
+	router.With(m.CheckAuthMiddleware).Get("/accounts", handler.AccountsInfo)
+	router.With(m.CheckAuthMiddleware).Post("/accounts", handler.CreateAccount)
 	router.With(m.CheckAuthMiddleware).Post("/transaction", handler.SendMoney)
 	router.With(m.CheckAuthMiddleware).Post("/increment", handler.TopUpAccount)
 	return nil
+}
+
+func (th *TransferHanlder) IndexPage(tmpl *template.Template) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		if err := tmpl.ExecuteTemplate(w, "main", nil); err != nil {
+
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+	}
 }
 
 func (th *TransferHanlder) LoginPage(tmpl *template.Template) http.HandlerFunc {
@@ -53,6 +66,7 @@ func (th *TransferHanlder) LoginPage(tmpl *template.Template) http.HandlerFunc {
 }
 
 func (th *TransferHanlder) AccountsInfo(w http.ResponseWriter, r *http.Request) {
+
 	u, ok := r.Context().Value(middleware.CtxKeyUser).(*domain.User)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -74,6 +88,39 @@ func (th *TransferHanlder) AccountsInfo(w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.Write(reply)
+
+}
+
+func (th *TransferHanlder) CreateAccount(w http.ResponseWriter, r *http.Request) {
+	u, ok := r.Context().Value(middleware.CtxKeyUser).(*domain.User)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	IIN := r.FormValue("IIN")
+
+	if u.IIN != IIN {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("incorrect iin"))
+		return
+	}
+
+	account := domain.Account{
+		OwnerID:    u.ID,
+		IIN:        IIN,
+		Amount:     0,
+		Registered: time.Now(),
+	}
+
+	err := th.usecase.CreateAccount(r.Context(), &account)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Created"))
 }
 
 func (th *TransferHanlder) SendMoney(w http.ResponseWriter, r *http.Request) {
@@ -104,6 +151,7 @@ func (th *TransferHanlder) SendMoney(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Success"))
 }
 
 func (th *TransferHanlder) TopUpAccount(w http.ResponseWriter, r *http.Request) {

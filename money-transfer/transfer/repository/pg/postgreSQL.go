@@ -43,15 +43,19 @@ func (db *sqlRepository) CloseConnection() {
 }
 
 func (db *sqlRepository) CreateAccount(ctx context.Context, account *domain.Account) error {
-	_, err := db.Exec(ctx, `INSERT INTO accounts(OwnerID, IIN, Amount) VALUES ($1,$2,$3)`, account.OwnerID, account.IIN, 0)
+	_, err := db.Exec(ctx, `
+	INSERT INTO accounts(ID, OwnerID, IIN, Amount, Registered) 
+	VALUES ($1,$2,$3,$4,$5)`,
+		account.ID, account.OwnerID, account.IIN, 0, account.Registered,
+	)
 	return err
 }
 
 func (db *sqlRepository) FindAccount(ctx context.Context, ID int64) (*domain.Account, error) {
 	acc := &domain.Account{}
 	err := db.QueryRow(ctx,
-		`SELECT ID, OwnerID, IIN, Amount FROM accounts WHERE ID=$1`,
-		ID).Scan(acc.ID, acc.OwnerID, acc.IIN, acc.Amount)
+		`SELECT ID, OwnerID, IIN, Amount, Registered FROM accounts WHERE ID=$1`,
+		ID).Scan(&acc.ID, &acc.OwnerID, &acc.IIN, &acc.Amount, &acc.Registered)
 	return acc, err
 }
 
@@ -144,4 +148,13 @@ func (db *sqlRepository) CreateTransaction(ctx context.Context, SenderID, Receiv
 	}
 
 	return nil
+}
+
+func (db *sqlRepository) AccountExists(ctx context.Context, accountID int64) bool {
+	var id int64
+	err := db.QueryRow(ctx, `SELECT OwnerID FROM accounts WHERE ID = $1`, accountID).Scan(&id)
+	if err != nil && err == pgx.ErrNoRows {
+		return false
+	}
+	return true
 }
