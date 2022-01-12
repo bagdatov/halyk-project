@@ -57,8 +57,8 @@ func (m *MiddleWare) CheckAuthMiddleware(next http.Handler) http.Handler {
 
 		user, err := m.ParseToken(c.Value, true)
 		if err != nil {
-			if err == domain.ErrExpiredToken {
-				http.Redirect(w, r, "/update-token", http.StatusMovedPermanently)
+			if err == domain.ErrExpiredToken || err.Error() == "Token is expired" {
+				http.Redirect(w, r, "http://localhost:7575/update-token", http.StatusMovedPermanently)
 				return
 			}
 

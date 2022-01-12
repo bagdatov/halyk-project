@@ -53,7 +53,7 @@ func (tu *transferUseCase) GetAccounts(ctx context.Context, OwnerID int64) ([]*d
 }
 
 func (tu *transferUseCase) ChangeAccountSum(ctx context.Context, accountID, newValue int64) error {
-	if newValue <= 150 {
+	if newValue < 150 {
 		return domain.ErrTransSum
 	}
 
@@ -70,8 +70,12 @@ func (tu *transferUseCase) CreateTransaction(ctx context.Context, requester, Sen
 		return domain.ErrTransReceiver
 	}
 
-	if Value <= 150 {
+	if Value < 150 {
 		return domain.ErrTransSum
+	}
+
+	if account.Amount < Value {
+		return domain.ErrInvalidSum
 	}
 
 	return tu.db.CreateTransaction(ctx, SenderID, ReceiverID, Value)

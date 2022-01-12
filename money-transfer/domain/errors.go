@@ -8,6 +8,8 @@ var ErrTransSender = errors.New("invalid transaction sender")
 
 var ErrTransSum = errors.New("minimum sum for transaction should be higher than 150")
 
+var ErrInvalidSum = errors.New("your balance is insufficient for this transaction")
+
 var ErrInvalidHeader = errors.New("invalid authorization header")
 
 var ErrInvalidToken = errors.New("invalid token")

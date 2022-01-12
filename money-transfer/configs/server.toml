@@ -8,5 +8,5 @@ db_password = "postgres"
 
 access_token_secret = "18DbJX9NR0WApJtB9OgmQkdlmHLwaHpK"
 refresh_token_secret = "ICdzotFuzFduNeFhWvg4cieOTWyFccIr"
-access_token_ttl = "1h"
+access_token_ttl = "5m"
 refresh_token_ttl = "168h"

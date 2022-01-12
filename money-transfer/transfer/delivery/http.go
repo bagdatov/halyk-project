@@ -33,6 +33,8 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 		return err
 	}
 
+	router.Get("/", handler.Redirect)
+
 	router.Get("/login", handler.LoginPage(tmpl))
 
 	m := middleware.New(c)
@@ -43,6 +45,10 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 	router.With(m.CheckAuthMiddleware).Post("/transaction", handler.SendMoney)
 	router.With(m.CheckAuthMiddleware).Post("/increment", handler.TopUpAccount)
 	return nil
+}
+
+func (th *TransferHanlder) Redirect(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/main", http.StatusFound)
 }
 
 func (th *TransferHanlder) IndexPage(tmpl *template.Template) http.HandlerFunc {
@@ -155,6 +161,7 @@ func (th *TransferHanlder) SendMoney(w http.ResponseWriter, r *http.Request) {
 }
 
 func (th *TransferHanlder) TopUpAccount(w http.ResponseWriter, r *http.Request) {
+
 	acc := r.FormValue("accountID")
 	value := r.FormValue("amount")
 
@@ -173,4 +180,5 @@ func (th *TransferHanlder) TopUpAccount(w http.ResponseWriter, r *http.Request) 
 	}
 
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Success"))
 }
