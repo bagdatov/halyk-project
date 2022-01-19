@@ -42,6 +42,7 @@ func NewTransactionHandler(c *domain.Config, router *chi.Mux, tu domain.Transfer
 	router.With(m.CheckAuthMiddleware).Get("/main", handler.IndexPage(tmpl))
 	router.With(m.CheckAuthMiddleware).Get("/accounts", handler.AccountsInfo)
 	router.With(m.CheckAuthMiddleware).Post("/accounts", handler.CreateAccount)
+	router.With(m.CheckAuthMiddleware).Post("/accounts/history", handler.TransactionsHistory)
 	router.With(m.CheckAuthMiddleware).Post("/transaction", handler.SendMoney)
 	router.With(m.CheckAuthMiddleware).Post("/increment", handler.TopUpAccount)
 	return nil
@@ -181,4 +182,36 @@ func (th *TransferHanlder) TopUpAccount(w http.ResponseWriter, r *http.Request) 
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Success"))
+}
+
+func (th *TransferHanlder) TransactionsHistory(w http.ResponseWriter, r *http.Request) {
+	u, ok := r.Context().Value(middleware.CtxKeyUser).(*domain.User)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	acc := r.FormValue("accountID")
+	accountID, err := strconv.ParseInt(acc, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	history, err := th.usecase.AccountTransactions(r.Context(), u.ID, accountID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		log.Warn().Err(err).Msg("TransactionsHistory")
+		return
+	}
+
+	reply, err := json.Marshal(history)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Warn().Err(err).Msg("error with marshal")
+		return
+	}
+
+	w.Write(reply)
 }

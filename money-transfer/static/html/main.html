@@ -21,21 +21,25 @@
 
     <div class="feed">
 
-        <p> <b> Check out own accounts </b> </p>
-        <a href="/accounts" id="login"> Your accounts </a>
+        <p>
+            <b> Check out own accounts </b>
+            <br> <a href="/accounts" id="login"> Your accounts </a>
+        </p>
 
-        <p> <b> Create new wallet </b> </p>
+        <p>
+            <b> Create new wallet </b>
         <form method="POST" action="/accounts">
-                <p>Confirm by passing IIN</p>
-                <input name="IIN" minlength="12">
+            <p>Confirm by passing IIN</p>
+            <input name="IIN" minlength="12">
 
-                <p>
-                    <input id="send" value="Create new wallet" type="submit"></input>
-                </p>
-          
+            <p>
+                <input id="send" value="Create new wallet" type="submit"></input>
+            </p>
         </form>
+        </p>
 
-        <p> <b> Send money </b> </p>
+        <p>
+            <b> Send money </b>
         <form method="POST" action="/transaction">
             <p> From your account: </p>
             <input name="senderID" placeholder="your wallet id">
@@ -47,8 +51,10 @@
                 <input id="send" value="Send money" type="submit"></input>
             </p>
         </form>
+        </p>
 
-        <p> <b> Add money to your account </b> </p>
+        <p>
+            <b> Add money to your account </b>
         <form method="POST" action="/increment">
 
             <p> For your account: </p>
@@ -58,7 +64,25 @@
             <p>
                 <input id="send" value="Add money" type="submit"></input>
             </p>
-        </form>     
+        </form>
+        </p>
+
+
+        <p>
+            <b> Check your account transactions </b>
+        <form method="POST" action="/accounts/history">
+
+            <p> For your account: </p>
+            <input name="accountID" placeholder="your wallet id">
+            <p>
+                <input id="send" value="Show" type="submit"></input>
+            </p>
+        </form>
+        </p>
+
+        <p>
+            <a href="http://localhost:7575/user-data" id="login"> Full user data</a>
+        </p>
 
     </div>
 

@@ -17,3 +17,5 @@ var ErrInvalidToken = errors.New("invalid token")
 var ErrExpiredToken = errors.New("expired token")
 
 var ErrNoHeader = errors.New("authorization header not found")
+
+var ErrNotFound = errors.New("requester doesn't have account with this ID")

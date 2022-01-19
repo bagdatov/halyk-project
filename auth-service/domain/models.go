@@ -15,6 +15,7 @@ type User struct {
 	Registered time.Time `json:"Registered,omitempty"`
 	Phone      string    `json:"Phone,omitempty"`
 	Role       string    `json:"Role,omitempty"`
+	Wallets    string    `json:"Wallets,omitempty"`
 }
 
 func (u *User) Valid() bool {

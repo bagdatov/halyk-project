@@ -1,14 +1,13 @@
 package domain
 
-import (
-	"context"
-)
+import "context"
 
 type Transfer interface {
 	CreateAccount(ctx context.Context, account *Account) error
 	FindAccount(ctx context.Context, ID int64) (*Account, error)
 	GetAccounts(ctx context.Context, OwnerID int64) ([]*Account, error)
 	ChangeAccountSum(ctx context.Context, accountID, newValue int64) error
+	AccountTransactions(ctx context.Context, requester, accountID int64) ([]*Transaction, error)
 	CreateTransaction(ctx context.Context, requester, SenderID, ReceiverID, Value int64) error
 	Close()
 }
@@ -21,6 +20,7 @@ type Repository interface {
 	FindAccount(ctx context.Context, ID int64) (*Account, error)
 	GetAccounts(ctx context.Context, OwnerID int64) ([]*Account, error)
 	GetLastTransaction(ctx context.Context, accountID int64) (*Transaction, error)
+	AccountTransactions(ctx context.Context, accountID int64) ([]*Transaction, error)
 	ChangeAccountSum(ctx context.Context, accountID, newValue int64) error
 	CreateTransaction(ctx context.Context, SenderID, ReceiverID, Value int64) error
 	AccountExists(ctx context.Context, accountID int64) bool

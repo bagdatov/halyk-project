@@ -84,3 +84,13 @@ func (tu *transferUseCase) CreateTransaction(ctx context.Context, requester, Sen
 func (tu *transferUseCase) Close() {
 	tu.db.CloseConnection()
 }
+
+func (tu *transferUseCase) AccountTransactions(ctx context.Context, requester, accountID int64) ([]*domain.Transaction, error) {
+
+	account, err := tu.db.FindAccount(ctx, accountID)
+	if err != nil || account.OwnerID != requester {
+		return nil, domain.ErrNotFound
+	}
+
+	return tu.db.AccountTransactions(ctx, accountID)
+}

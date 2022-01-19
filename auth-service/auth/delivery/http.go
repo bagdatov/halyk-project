@@ -45,6 +45,7 @@ func (s *AuthHanlder) CheckAuthMiddleware(next http.Handler) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 
+		// Token now in cookie, not header
 		// token, err := s.au.ExtractToken(header)
 		// if err != nil {
 		// 	log.Debug().Err(err).Msgf("Extract token error: %v", err)
@@ -242,8 +243,9 @@ func (s *AuthHanlder) UserDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8080/accounts", nil)
+	req, err := http.NewRequest(http.MethodGet, "http://transfer-app:8080/accounts", nil)
 	if err != nil {
+		log.Debug().Err(err).Msgf("UserDataHandler: %w", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -257,6 +259,7 @@ func (s *AuthHanlder) UserDataHandler(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Debug().Err(err).Msgf("UserDataHandler: %w", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -269,19 +272,18 @@ func (s *AuthHanlder) UserDataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userData.Wallets = string(bytes)
+
 	reply, err := json.Marshal(userData)
 	if err != nil {
-		log.Debug().Err(err).Msgf("UserData: Marshal user: %v", err)
+		log.Debug().Err(err).Msgf("UserDataHandler: Marshal user: %v", err)
 
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Error proceeding data"))
 		return
 	}
-	reply = append(reply, bytes...)
 
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(reply)
-
 }
 
 func extractCredentials(r *http.Request) (string, string) {

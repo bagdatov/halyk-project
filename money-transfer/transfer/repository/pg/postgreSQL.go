@@ -142,7 +142,10 @@ func (db *sqlRepository) CreateTransaction(ctx context.Context, SenderID, Receiv
 		return err
 	}
 
-	_, err = tx.Exec(ctx, `INSERT INTO transactions(SenderID, ReceiverID, Amount, Date) VALUES($1, $2, $3, $4)`, SenderID, ReceiverID, Value, time.Now())
+	_, err = tx.Exec(ctx, `
+	INSERT INTO transactions(SenderID, ReceiverID, Amount, Date) 
+	VALUES($1, $2, $3, $4)`, SenderID, ReceiverID, Value, time.Now())
+
 	if err != nil {
 		return err
 	}
@@ -157,4 +160,39 @@ func (db *sqlRepository) AccountExists(ctx context.Context, accountID int64) boo
 		return false
 	}
 	return true
+}
+
+func (db *sqlRepository) AccountTransactions(ctx context.Context, accountID int64) ([]*domain.Transaction, error) {
+
+	rows, err := db.Query(ctx, `
+	SELECT ID, SenderID, ReceiverID, Amount, Date 
+	FROM transactions 
+	WHERE SenderID = $1 OR ReceiverID = $2 
+	ORDER BY Date DESC
+	`, accountID, accountID)
+
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			err = nil
+		}
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	trans := make([]*domain.Transaction, 0)
+
+	for rows.Next() {
+
+		t := &domain.Transaction{}
+
+		err := rows.Scan(&t.ID, &t.SenderID, &t.ReceiverID, &t.Amount, &t.Date)
+		if err != nil {
+			return nil, err
+		}
+
+		trans = append(trans, t)
+	}
+
+	return trans, rows.Err()
 }
