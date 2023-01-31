@@ -3,6 +3,9 @@
 PET проект для HalykAcademy x JumysBar.
 Сервис переводов для физических лиц, который может зарегистрироваться, открыть карту и счет по ИИН, и совершить перевод. Есть возможность посмотреть отчет и детализацию по транзакциям.
 
+### Disclaimer
+`The code was written in Dec 2021 and does not reflect my current level. Added for historical purposes :)`
+
 ## Сущности:
 - Юзер (с ролями)
 - Счета юзеров
